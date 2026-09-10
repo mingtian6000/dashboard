@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Project Completion Dashboard</title>
+<style>
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    border-radius: 0 !important;
+  }
+
+  body {
+    background: #ffffff;
+    font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+    color: #1f2937;
+    padding: 24px 16px;
+  }
+
+  .dashboard {
+    max-width: 1200px;
+    margin: 0 auto;
+    border: 1px solid #d1d5db;
+  }
+
+  /* ===== 第一层：Project Tab ===== */
+  .project-tabs {
+    display: flex;
+    border-bottom: 2px solid #111827;
+    background: #f9fafb;
+  }
+
+  .project-tabs .tab {
+    padding: 14px 32px;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    border: none;
+    border-right: 1px solid #e5e7eb;
+    background: transparent;
+    color: #4b5563;
+    cursor: pointer;
+  }
+
+  .project-tabs .tab:hover {
+    background: #eef2ff;
+  }
+
+  .project-tabs .tab.active {
+    background: #111827;
+    color: #ffffff;
+  }
+
+  .main-content {
+    padding: 20px;
+  }
+
+  .section-label {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #6b7280;
+    margin: 18px 0 8px;
+  }
+
+  .section-label:first-child {
+    margin-top: 0;
+  }
+
+  /* ===== 第二层：App Tab ===== */
+  .app-tabs {
+    display: flex;
+    border-bottom: 1px solid #d1d5db;
+  }
+
+  .app-tabs .tab {
+    padding: 10px 24px;
+    font-size: 14px;
+    font-weight: 500;
+    border: 1px solid transparent;
+    border-bottom: none;
+    margin-right: 4px;
+    background: transparent;
+    color: #6b7280;
+    cursor: pointer;
+  }
+
+  .app-tabs .tab:hover {
+    background: #f3f4f6;
+  }
+
+  .app-tabs .tab.active {
+    background: #ffffff;
+    border-color: #d1d5db;
+    border-bottom: 2px solid #111827;
+    color: #111827;
+    font-weight: 600;
+    margin-bottom: -1px;
+  }
+
+  .app-detail {
+    border: 1px solid #d1d5db;
+    border-top: none;
+    padding: 20px;
+  }
+
+  /* ===== 图表区（柱状图 by App） ===== */
+  .chart-box {
+    border: 1px solid #d1d5db;
+    padding: 14px 16px;
+    margin-bottom: 20px;
+  }
+
+  .chart-box h3 {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #374151;
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .chart-canvas {
+    position: relative;
+    width: 100%;
+    height: 200px;
+  }
+
+  /* ===== 第三层：Environment Tab（一行，Production 在前） ===== */
+  .env-tabs {
+    display: flex;
+    flex-wrap: nowrap;
+    border: 1px solid #d1d5db;
+    border-bottom: none;
+    background: #f9fafb;
+  }
+
+  .env-tabs .tab {
+    flex: 1 1 auto;
+    padding: 10px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    border: none;
+    border-right: 1px solid #e5e7eb;
+    background: transparent;
+    color: #4b5563;
+    cursor: pointer;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  .env-tabs .tab:last-child {
+    border-right: none;
+  }
+
+  .env-tabs .tab.active {
+    background: #111827;
+    color: #ffffff;
+  }
+
+  /* ===== 环境详情：进度 + 表格并排 ===== */
+  .env-detail {
+    border: 1px solid #d1d5db;
+    padding: 18px;
+    display: grid;
+    grid-template-columns: minmax(240px, 1fr) 1.6fr;
+    gap: 24px;
+    align-items: start;
+  }
+
+  .env-progress .number {
+    font-size: 36px;
+    font-weight: 700;
+    color: #111827;
+    line-height: 1;
+  }
+
+  .env-progress .label {
+    font-size: 13px;
+    color: #6b7280;
+    margin-top: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .comp-count {
+    font-size: 12.5px;
+    color: #6b7280;
+    margin-top: 4px;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  .count-warn {
+    color: #b45309;
+    font-weight: 600;
+    margin-left: 4px;
+  }
+
+  .progress-bar {
+    width: 100%;
+    height: 8px;
+    background: #e5e7eb;
+    margin-top: 10px;
+  }
+
+  .progress-bar .fill {
+    height: 100%;
+    background: #111827;
+    transition: width 0.4s ease;
+  }
+
+  .env-status {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 5px 12px;
+    margin-top: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    border: 1px solid #d1d5db;
+    background: #ffffff;
+  }
+  .env-status.healthy    { border-color: #15803d; color: #15803d; }
+  .env-status.in-progress{ border-color: #b45309; color: #b45309; }
+  .env-status.at-risk    { border-color: #b91c1c; color: #b91c1c; }
+
+  /* ===== RWI 时间窗口（Last 30 / 60 / 90 days，按 updated 字段过滤） ===== */
+  .activity-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+  }
+
+  .activity-title {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #6b7280;
+  }
+
+  .period-tabs {
+    display: inline-flex;
+    border: 1px solid #d1d5db;
+    background: #f9fafb;
+  }
+
+  .period-tabs .tab {
+    padding: 5px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    border: none;
+    border-right: 1px solid #e5e7eb;
+    background: transparent;
+    color: #4b5563;
+    cursor: pointer;
+  }
+
+  .period-tabs .tab:last-child { border-right: none; }
+  .period-tabs .tab:hover      { background: #eef2ff; }
+  .period-tabs .tab.active     { background: #111827; color: #ffffff; }
+
+  .period-summary {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 12.5px;
+    margin-bottom: 10px;
+    padding: 8px 12px;
+    border: 1px solid #d1d5db;
+    background: #fafafa;
+    flex-wrap: wrap;
+  }
+
+  .period-summary .ps-num { font-size: 18px; font-weight: 700; color: #111827; }
+  .period-summary .ps-key { color: #6b7280; margin-left: 3px; }
+  .period-summary .ps-sep { color: #d1d5db; }
+  .period-summary .ps-grow { flex: 1 1 auto; }
+
+  .trend { font-weight: 700; font-size: 12px; margin-left: 8px; }
+  .trend.up   { color: #15803d; }
+  .trend.down { color: #b91c1c; }
+  .trend.flat { color: #6b7280; }
+
+  /* ===== RWI 表格 ===== */
+  table.rwi {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+
+  table.rwi th,
+  table.rwi td {
+    border: 1px solid #d1d5db;
+    padding: 7px 9px;
+    text-align: left;
+    vertical-align: middle;
+  }
+
+  table.rwi thead th {
+    background: #f3f4f6;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: #374151;
+    white-space: nowrap;
+  }
+
+  table.rwi tbody tr:nth-child(even) {
+    background: #fafafa;
+  }
+
+  .st {
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .st-done  { color: #15803d; }
+  .st-wip   { color: #b45309; }
+  .st-open  { color: #b91c1c; }
+
+  .placeholder {
+    font-size: 13px;
+    color: #9ca3af;
+    padding: 24px 0;
+  }
+
+  /* ===== 表头过滤器 + 分页 ===== */
+  .rwi-tools {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 6px;
+    flex-wrap: wrap;
+  }
+  .rwi-count { font-size: 12px; color: #6b7280; }
+
+  .btn-clear {
+    font-size: 12px;
+    padding: 3px 10px;
+    border: 1px solid #b91c1c;
+    background: #ffffff;
+    color: #b91c1c;
+    cursor: pointer;
+  }
+  .btn-clear:hover { background: #fef2f2; }
+
+  table.rwi .rwi-filters th {
+    background: #ffffff;
+    padding: 5px 4px;
+    vertical-align: middle;
+  }
+  .rwi-filters input[type="text"],
+  .rwi-filters select {
+    width: 100%;
+    min-width: 74px;
+    font-size: 11px;
+    padding: 3px 5px;
+    border: 1px solid #d1d5db;
+    background: #fff;
+    color: #1f2937;
+    box-sizing: border-box;
+  }
+  .rwi-filters input:focus,
+  .rwi-filters select:focus {
+    outline: 1px solid #111827;
+  }
+  .rwi-filters .date-range {
+    display: flex;
+    gap: 3px;
+    white-space: nowrap;
+  }
+  .rwi-filters .date-range input[type="date"] {
+    flex: 1 1 0;
+    min-width: 0;
+    font-size: 11px;
+    padding: 2px 3px;
+    border: 1px solid #d1d5db;
+    background: #fff;
+    color: #1f2937;
+    width: auto;
+    box-sizing: border-box;
+  }
+
+  .rwi-pager {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 8px;
+  }
+  .rwi-pager .pg {
+    font-size: 12px;
+    padding: 4px 12px;
+    border: 1px solid #d1d5db;
+    background: #ffffff;
+    color: #111827;
+    cursor: pointer;
+  }
+  .rwi-pager .pg:hover:not(:disabled) { background: #f3f4f6; }
+  .rwi-pager .pg:disabled { opacity: 0.4; cursor: default; }
+  .rwi-pager .pg-info { font-size: 12px; color: #374151; }
+
+  /* ===== Market Tab（第二层）+ Market 汇总 ===== */
+  .market-tabs {
+    display: flex;
+    border: 1px solid #d1d5db;
+    background: #f9fafb;
+    margin-bottom: 10px;
+  }
+  .market-tabs .tab {
+    padding: 9px 20px;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    border: none;
+    border-right: 1px solid #e5e7eb;
+    background: transparent;
+    color: #4b5563;
+    cursor: pointer;
+  }
+  .market-tabs .tab:last-child { border-right: none; }
+  .market-tabs .tab:hover { background: #eef2ff; }
+  .market-tabs .tab.active { background: #111827; color: #ffffff; }
+
+  .market-summary {
+    border: 1px solid #d1d5db;
+    padding: 14px 16px;
+    margin-bottom: 18px;
+    background: #fafafa;
+  }
+  .market-summary .ms-title {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #6b7280;
+    margin-bottom: 10px;
+  }
+  .market-summary .ms-cells {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+  }
+  .market-summary .ms-cell {
+    border: 1px solid #e5e7eb;
+    background: #ffffff;
+    padding: 10px 12px;
+  }
+  .market-summary .ms-env {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #6b7280;
+  }
+  .market-summary .ms-pct { font-size: 26px; font-weight: 700; color: #111827; line-height: 1.1; margin-top: 2px; }
+  .market-summary .ms-count { font-size: 11.5px; color: #6b7280; margin-top: 2px; }
+  .market-summary .progress-bar { margin-top: 8px; height: 6px; }
+  .market-summary .env-status { margin-top: 8px; font-size: 10.5px; padding: 3px 9px; }
+
+  @media (max-width: 768px) {
+    .env-detail { grid-template-columns: 1fr; }
+    .market-summary .ms-cells { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="dashboard">
+  <div class="project-tabs" id="projectTabs"></div>
+  <div class="main-content" id="mainContent"></div>
+</div>
+
+<script src="data.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  // ============ 数据 ============
+  // 数据已与模板拆分，存放于 data.js（全局 window.DASHBOARD_DATA）。
+  // 之后更新组件数量（done/total）与 RWI 时，只需编辑 data.js。
+  const DATA = window.DASHBOARD_DATA || {};
+
+  // App keys 按 project 显式映射；未列出的 project 回退到 data.js 中该项目的 apps 键。
+  const PROJECT_APP_KEYS = {
+    "F24": ["Infra", "Helm", "CM"],
+    "C48": ["Infra", "Helm", "DAG", "DB"],
+    "DDS": ["Infra"]
+  };
+  // Market keys 按 project 显式映射；未列出的 project 回退到 data.js 中该项目的 markets 键。
+  const PROJECT_MARKETS = {
+    "F24": ["EU", "AMH", "HASE", "APST", "MX", "US", "INDIA"],
+    "C48": ["UK", "HASE", "MYH"],
+    "DDS": ["IN", "GB", "HK"]
+  };
+  function marketKeysOf(project) {
+    const keys = PROJECT_MARKETS[project];
+    if (keys && keys.length) return keys;
+    const d = DATA[project];
+    return d && d.markets ? Object.keys(d.markets) : [];
+  }
+  function marketRef(project, market) {
+    return (DATA[project] && DATA[project].markets && DATA[project].markets[market]) || null;
+  }
+  function appKeysOf(project) {
+    const keys = PROJECT_APP_KEYS[project];
+    if (keys && keys.length) return keys;
+    const ms = marketKeysOf(project);
+    const mk = ms.length ? marketRef(project, ms[0]) : null;
+    return mk && mk.apps ? Object.keys(mk.apps) : [];
+  }
+  // 环境：Production 在最前，一行显示
+  const ENV_ORDER = [
+    { key: "prod",    label: "Production" },
+    { key: "pre",     label: "Pre-Production" },
+    { key: "nonprod", label: "Non-Production" }
+  ];
+
+  let currentProject = "F24";
+  let currentMarket  = marketKeysOf("F24")[0];   // 默认 F24 的第一个 Market
+  let currentApp     = appKeysOf(currentProject)[0];
+  let currentEnv     = "prod";   // 默认 Production
+
+  // 时间窗口：data.js 始终准备最近 90 天的数据，前端按用户点击过滤 30/60/90
+  const TIME_WINDOWS = [
+    { days: 30, label: "Last 30 days" },
+    { days: 60, label: "Last 60 days" },
+    { days: 90, label: "Last 90 days" }
+  ];
+  let currentWindow = 90;
+
+  let appBarChart  = null;
+  let envPieChart  = null;
+
+  document.addEventListener("DOMContentLoaded", init);
+
+  function init() {
+    renderProjectTabs();
+    renderContent();
+  }
+
+  // ===== 第一层：Project Tab =====
+  function renderProjectTabs() {
+    const c = document.getElementById("projectTabs");
+    c.innerHTML = "";
+    Object.keys(DATA).forEach(proj => {
+      const b = document.createElement("button");
+      b.className = "tab" + (proj === currentProject ? " active" : "");
+      b.textContent = proj;
+      b.onclick = () => {
+        currentProject = proj;
+        currentMarket  = marketKeysOf(proj)[0];
+        currentApp     = appKeysOf(proj)[0];
+        currentEnv     = "prod";
+        renderProjectTabs();
+        renderContent();
+      };
+      c.appendChild(b);
+    });
+  }
+
+  // ===== 主内容 =====
+  function renderContent() {
+    const main = document.getElementById("mainContent");
+    const project = DATA[currentProject];
+
+    main.innerHTML = `
+      <div class="section-label">Market</div>
+      <div class="market-tabs" id="marketTabs"></div>
+      <div class="market-summary" id="marketSummary"></div>
+
+      <div class="section-label">Application</div>
+      <div class="app-tabs" id="appTabs"></div>
+
+      <div class="app-detail">
+        <!-- by App 堆叠柱状图：随 market + env + 30/60/90 时间窗口变化 -->
+        <div class="chart-box">
+          <h3 id="appChartTitle">Completion by Application</h3>
+          <div class="chart-canvas"><canvas id="appBarChart"></canvas></div>
+        </div>
+
+        <div class="section-label">Environment</div>
+        <div class="env-tabs" id="envTabs"></div>
+
+        <div class="env-detail" id="envDetail"></div>
+      </div>
+    `;
+
+    renderMarketTabs();
+    renderMarketSummary();
+    renderAppTabs();
+    renderEnvTabs();
+    renderEnvDetail();
+    createAppBarChart();
+  }
+
+  // ===== 第二层：Market Tab =====
+  function renderMarketTabs() {
+    const c = document.getElementById("marketTabs");
+    if (!c) return;
+    c.innerHTML = "";
+    marketKeysOf(currentProject).forEach(mkt => {
+      const b = document.createElement("button");
+      b.className = "tab" + (mkt === currentMarket ? " active" : "");
+      b.textContent = mkt;
+      b.onclick = () => {
+        currentMarket = mkt;
+        currentApp    = appKeysOf(currentProject)[0];
+        currentEnv    = "prod";
+        renderMarketTabs();
+        renderMarketSummary();
+        renderAppTabs();
+        renderEnvTabs();
+        renderEnvDetail();
+        createAppBarChart();
+      };
+      c.appendChild(b);
+    });
+  }
+
+  // ===== Market 汇总：按 env 聚合该 market 下所有 app 的完成度 =====
+  function envAggregate(envKey) {
+    let total = 0, done = 0;
+    appKeysOf(currentProject).forEach(app => {
+      const m = marketRef(currentProject, currentMarket);
+      if (!m) return;
+      const s = (m.apps[app] && m.apps[app][envKey]) || {};
+      total += s.total || 0;
+      const rows = (m.rwi[app] && m.rwi[app][envKey]) || [];
+      done += rows.filter(r => r && String(r.status).toUpperCase() === "DONE").length;
+    });
+    return { done, total };
+  }
+
+  function renderMarketSummary() {
+    const host = document.getElementById("marketSummary");
+    if (!host) return;
+    host.innerHTML = `
+      <div class="ms-title">Market · ${esc(currentMarket)}</div>
+      <div class="ms-cells">
+        ${ENV_ORDER.map(env => {
+          const agg = envAggregate(env.key);
+          const pct = pctOf(agg);
+          const st  = getStatus(pct);
+          return `
+          <div class="ms-cell">
+            <div class="ms-env">${env.label}</div>
+            <div class="ms-pct">${pct}%</div>
+            <div class="ms-count">${agg.done} of ${agg.total} components</div>
+            <div class="progress-bar"><div class="fill" style="width:${pct}%;"></div></div>
+            <span class="env-status ${st.cls}">${st.text}</span>
+          </div>`;
+        }).join("")}
+      </div>
+    `;
+  }
+
+  // ===== 第三层：App Tab =====
+  function renderAppTabs() {
+    const c = document.getElementById("appTabs");
+    c.innerHTML = "";
+    appKeysOf(currentProject).forEach(app => {
+      const b = document.createElement("button");
+      b.className = "tab" + (app === currentApp ? " active" : "");
+      b.textContent = app;
+      b.onclick = () => {
+        currentApp = app;
+        renderAppTabs();
+        renderEnvDetail();
+        createAppBarChart();
+      };
+      c.appendChild(b);
+    });
+  }
+
+  // ===== 第三层：Environment Tab（一行） =====
+  function renderEnvTabs() {
+    const c = document.getElementById("envTabs");
+    c.innerHTML = "";
+    ENV_ORDER.forEach(env => {
+      const b = document.createElement("button");
+      b.className = "tab" + (env.key === currentEnv ? " active" : "");
+      b.textContent = env.label;
+      b.onclick = () => {
+        currentEnv = env.key;
+        renderEnvTabs();
+        renderEnvDetail();
+        createAppBarChart();
+      };
+      c.appendChild(b);
+    });
+  }
+
+  // ===== 环境详情：进度（全量）+ RWI 活动（按 30/60/90 天窗口） =====
+  function renderEnvDetail() {
+    const c = document.getElementById("envDetail");
+    const stat     = getStat(currentProject, currentApp, currentEnv);
+    const value    = pctOf(stat);
+    const status   = getStatus(value);
+    const envLabel = labelOf(currentEnv);
+
+    c.innerHTML = `
+      <div class="env-progress">
+        <div class="number">${value}%</div>
+        <div class="label">${currentApp} · ${envLabel}</div>
+        <div class="comp-count">${stat.done} of ${stat.total} components complete (all time)${stat.done > stat.total ? ` <span class="count-warn">⚠ done (${stat.done}) exceeds total (${stat.total}) — check data.js totals</span>` : ""}</div>
+        <div class="progress-bar"><div class="fill" style="width:${value}%;"></div></div>
+        <div class="env-status ${status.cls}">${status.text}</div>
+      </div>
+      ${activityColumnHTML(currentWindow)}
+    `;
+
+    // 环境完成度环形图
+    createEnvPieChart(value);
+
+    // 表格筛选 / 分页绑定（仅首次渲染该 app+env 时重置分页）
+    bindActivityTable();
+  }
+
+  // ===== RWI 时间窗口筛选（最近 30/60/90 天，按 updated 字段） =====
+  function rwiDateOf(row) {
+    if (!row || !row.updated) return null;
+    const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(row.updated).trim());
+    return m ? new Date(+m[1], +m[2] - 1, +m[3]) : null;
+  }
+
+  function dayAgo(days) {
+    const t = new Date();
+    return new Date(t.getFullYear(), t.getMonth(), t.getDate() - days);
+  }
+
+  function isInWindow(row, days) {
+    const d = rwiDateOf(row);
+    return d && d >= dayAgo(days) && d <= dayAgo(0);
+  }
+
+  // 上一个同长度周期：[today-2d, today-d) —— 用于比较改善 / 恶化
+  function isPrevBand(row, days) {
+    const d = rwiDateOf(row);
+    return d && d >= dayAgo(days * 2) && d < dayAgo(days);
+  }
+
+  function statusKey(r) { return String(r.status || "").trim().toUpperCase(); }
+
+  function countByStatus(rows) {
+    const c = { DONE: 0, WIP: 0, OPEN: 0 };
+    rows.forEach(r => { const k = statusKey(r); if (k in c) c[k]++; });
+    return c;
+  }
+
+  // 表格分页
+  const PAGE_SIZE = 8;
+  let tablePage = 1;
+  let tableKey = "";
+
+  function activityColumnHTML(days) {
+    const all  = envRowsAll();
+    const rows = all.filter(r => isInWindow(r, days));
+    const cur  = countByStatus(rows);
+    const total = cur.DONE + cur.WIP + cur.OPEN;
+    const pct  = total ? Math.round((cur.DONE / total) * 100) : 0;
+
+    // 与上一个同长度周期比较 → 改善 / 恶化 / 稳定
+    const prev      = countByStatus(all.filter(r => isPrevBand(r, days)));
+    const prevTotal = prev.DONE + prev.WIP + prev.OPEN;
+    const prevPct   = prevTotal ? Math.round((prev.DONE / prevTotal) * 100) : null;
+    const trend = prevPct === null
+      ? { cls: "flat", txt: "— no earlier data" }
+      : pct > prevPct + 0.5
+        ? { cls: "up",    txt: `▲ improving vs prior ${days}d (${pct}% vs ${prevPct}%)` }
+        : pct < prevPct - 0.5
+          ? { cls: "down",  txt: `▼ deteriorating vs prior ${days}d (${pct}% vs ${prevPct}%)` }
+          : { cls: "flat",  txt: `→ stable vs prior ${days}d (${pct}% vs ${prevPct}%)` };
+
+    const tabs = TIME_WINDOWS.map(w =>
+      `<button class="tab${w.days === currentWindow ? " active" : ""}" onclick="setWindow(${w.days})">${w.label}</button>`
+    ).join("");
+
+    return `
+      <div>
+        <div class="activity-head">
+          <span class="activity-title">RWI Activity · by last updated</span>
+          <div class="period-tabs">${tabs}</div>
+        </div>
+        <div class="period-summary">
+          <span><span class="ps-num">${cur.DONE}</span><span class="ps-key">done</span></span>
+          <span class="ps-sep">|</span>
+          <span><span class="ps-num">${cur.WIP}</span><span class="ps-key">wip</span></span>
+          <span class="ps-sep">|</span>
+          <span><span class="ps-num">${cur.OPEN}</span><span class="ps-key">open</span></span>
+          <span class="ps-sep">|</span>
+          <span><span class="ps-num">${pct}%</span><span class="ps-key">done in window</span></span>
+          <span class="ps-grow"></span>
+          <span class="trend ${trend.cls}">${trend.txt}</span>
+        </div>
+        ${rwiTableSkeleton()}
+      </div>
+    `;
+  }
+
+  function setWindow(days) {
+    currentWindow = days;
+    tablePage = 1;
+    renderEnvDetail();
+    createAppBarChart();
+  }
+
+  function envRowsAll() {
+    const m = marketRef(currentProject, currentMarket);
+    return (m && m.rwi[currentApp] && m.rwi[currentApp][currentEnv]) || [];
+  }
+
+  function activityRowsInWindow() {
+    return envRowsAll().filter(r => isInWindow(r, currentWindow));
+  }
+
+  function esc(s) {
+    return String(s == null ? "" : s)
+      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+  }
+
+  function uniqSorted(arr) {
+    return [...new Set(arr.filter(Boolean))].sort((a, b) => String(a).localeCompare(String(b)));
+  }
+
+  // ===== 表格骨架：表头 + 每列表头过滤器，tbody / 分页由 renderTableResults() 填充 =====
+  function rwiTableSkeleton() {
+    const compOptions = uniqSorted(envRowsAll().map(r => r.component))
+      .map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join("");
+    const assigneeOptions = uniqSorted(envRowsAll().map(r => r.assignee))
+      .map(a => `<option value="${esc(a)}">${esc(a)}</option>`).join("");
+
+    return `
+      <div class="rwi-tools">
+        <span class="rwi-count" id="rwiCount"></span>
+        <span class="ps-grow"></span>
+        <button type="button" class="btn-clear" id="btnClearFilters">✕ Clear filters</button>
+      </div>
+      <div style="overflow-x:auto;">
+      <table class="rwi">
+        <thead>
+          <tr>
+            <th>RWI ID</th>
+            <th>Component</th>
+            <th>Title</th>
+            <th>Assignee</th>
+            <th>Target Date</th>
+            <th>Updated</th>
+            <th>Status</th>
+          </tr>
+          <tr class="rwi-filters">
+            <th><input type="text" id="fId" placeholder="Contains…" title="Filter RWI ID"></th>
+            <th><select id="fComponent" title="Filter component"><option value="">All</option>${compOptions}</select></th>
+            <th><input type="text" id="fTitle" placeholder="Contains…" title="Filter title"></th>
+            <th><select id="fAssignee" title="Filter assignee"><option value="">All</option>${assigneeOptions}</select></th>
+            <th><span class="date-range"><input type="date" id="fTargetFrom" title="Target from"><input type="date" id="fTargetTo" title="Target to"></span></th>
+            <th><span class="date-range"><input type="date" id="fUpdatedFrom" title="Updated from"><input type="date" id="fUpdatedTo" title="Updated to"></span></th>
+            <th><select id="fStatus" title="Filter status"><option value="">All</option><option>Done</option><option>WIP</option><option>Open</option></select></th>
+          </tr>
+        </thead>
+        <tbody id="rwiBody"></tbody>
+      </table>
+      </div>
+      <div class="rwi-pager" id="rwiPager"></div>
+    `;
+  }
+
+  function rwiRowHTML(r) {
+    return `
+      <tr>
+        <td>${esc(r.id)}</td>
+        <td>${esc(r.component)}</td>
+        <td>${esc(r.title)}</td>
+        <td>${esc(r.assignee)}</td>
+        <td>${esc(r.target)}</td>
+        <td>${r.updated ? esc(r.updated) : "—"}</td>
+        <td><span class="st st-${esc(String(r.status || "").toLowerCase())}">${esc(r.status)}</span></td>
+      </tr>`;
+  }
+
+  function renderTableResults() {
+    const body = document.getElementById("rwiBody");
+    const pager = document.getElementById("rwiPager");
+    const cnt = document.getElementById("rwiCount");
+    if (!body) return;
+
+    const gv = id => { const el = document.getElementById(id); return el ? (el.value || "").trim() : ""; };
+    const f = {
+      id: gv("fId").toLowerCase(),
+      component: gv("fComponent"),
+      title: gv("fTitle").toLowerCase(),
+      assignee: gv("fAssignee"),
+      status: gv("fStatus"),
+      tFrom: gv("fTargetFrom"), tTo: gv("fTargetTo"),
+      uFrom: gv("fUpdatedFrom"), uTo: gv("fUpdatedTo")
+    };
+
+    const rows = activityRowsInWindow().filter(r => {
+      if (f.id && !String(r.id || "").toLowerCase().includes(f.id)) return false;
+      if (f.component && String(r.component || "").trim().toLowerCase() !== f.component.toLowerCase()) return false;
+      if (f.title && !String(r.title || "").toLowerCase().includes(f.title)) return false;
+      if (f.assignee && String(r.assignee || "").trim().toLowerCase() !== f.assignee.toLowerCase()) return false;
+      if (f.status && String(r.status || "").trim().toLowerCase() !== f.status.toLowerCase()) return false;
+      if (f.tFrom && (r.target || "") < f.tFrom) return false;
+      if (f.tTo   && (r.target || "") > f.tTo) return false;
+      if (f.uFrom && (r.updated || "") < f.uFrom) return false;
+      if (f.uTo   && (r.updated || "") > f.uTo) return false;
+      return true;
+    });
+
+    const total = rows.length;
+    const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+    if (tablePage > pages) tablePage = pages;
+    if (tablePage < 1) tablePage = 1;
+    const start = (tablePage - 1) * PAGE_SIZE;
+    const slice = rows.slice(start, start + PAGE_SIZE);
+
+    body.innerHTML = slice.length
+      ? slice.map(rwiRowHTML).join("")
+      : `<tr><td colspan="7" class="placeholder">${total === 0
+            ? "No RWI match your filters in the current window."
+            : "No RWI updated in the last " + currentWindow + " days for " + labelOf(currentEnv) + " yet."}</td></tr>`;
+
+    if (cnt) {
+      cnt.textContent = total
+        ? `${total} matching · showing ${start + 1}–${start + slice.length} of ${total}`
+        : "0 matching";
+    }
+    if (pager) {
+      pager.innerHTML = pages > 1
+        ? `<button type="button" class="pg" data-pg="prev" ${tablePage <= 1 ? "disabled" : ""}>‹ Prev</button>
+           <span class="pg-info">Page ${tablePage} of ${pages}</span>
+           <button type="button" class="pg" data-pg="next" ${tablePage >= pages ? "disabled" : ""}>Next ›</button>`
+        : "";
+    }
+  }
+
+  function bindActivityTable() {
+    if (!document.getElementById("rwiBody")) return;
+    const key = currentProject + "|" + currentApp + "|" + currentEnv;
+    if (tableKey !== key) { tableKey = key; tablePage = 1; }
+
+    const controls = document.querySelectorAll("#envDetail .rwi-filters input, #envDetail .rwi-filters select");
+    controls.forEach(el => el.addEventListener("change", () => { tablePage = 1; renderTableResults(); }));
+
+    const pager = document.getElementById("rwiPager");
+    if (pager) pager.addEventListener("click", ev => {
+      const b = ev.target.closest ? ev.target.closest("button.pg") : null;
+      if (!b || b.disabled) return;
+      tablePage += b.getAttribute("data-pg") === "next" ? 1 : -1;
+      renderTableResults();
+    });
+
+    const clear = document.getElementById("btnClearFilters");
+    if (clear) clear.addEventListener("click", () => {
+      controls.forEach(el => { el.value = ""; });
+      tablePage = 1;
+      renderTableResults();
+    });
+
+    renderTableResults();
+  }
+
+  // ===== 图表：by App 堆叠柱状图（随 env + 30/60/90 时间窗口变化） =====
+  function createAppBarChart() {
+    const ctx = document.getElementById("appBarChart");
+    if (!ctx) return;
+    if (appBarChart) appBarChart.destroy();
+
+    // 标题随当前 market / env 与时间窗口更新
+    const title = document.getElementById("appChartTitle");
+    if (title) title.textContent =
+      `Completion by Application (${currentMarket} · ${labelOf(currentEnv)}) · done in last ${currentWindow} days`;
+
+    const apps = appKeysOf(currentProject);
+    const statMap = {};
+    apps.forEach(app => {
+      const allTime = getStat(currentProject, app, currentEnv);   // done = 该 env 全部 Done
+      const m       = marketRef(currentProject, currentMarket);
+      const rows    = (m && m.rwi[app] && m.rwi[app][currentEnv]) || [];
+      const doneWin = rows.filter(r => statusKey(r) === "DONE" && isInWindow(r, currentWindow)).length;
+      statMap[app] = {
+        total:       allTime.total,
+        doneWin:     doneWin,
+        doneEarlier: Math.max(0, allTime.done - doneWin),
+        remaining:   Math.max(0, allTime.total - allTime.done)
+      };
+    });
+
+    appBarChart = new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels: apps.map(app => `${app} (${statMap[app].total})`),
+        datasets: [
+          {
+            label: `Done in last ${currentWindow}d`,
+            data: apps.map(app => statMap[app].doneWin),
+            backgroundColor: "#111827",
+            stack: "workload",
+            maxBarThickness: 56
+          },
+          {
+            label: "Done earlier",
+            data: apps.map(app => statMap[app].doneEarlier),
+            backgroundColor: "#9ca3af",
+            stack: "workload",
+            maxBarThickness: 56
+          },
+          {
+            label: "Remaining",
+            data: apps.map(app => statMap[app].remaining),
+            backgroundColor: "#e5e7eb",
+            stack: "workload",
+            maxBarThickness: 56
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          x: { stacked: true },
+          y: {
+            stacked: true,
+            beginAtZero: true,
+            ticks: { precision: 0 },
+            title: { display: true, text: "component count" }
+          }
+        },
+        plugins: {
+          legend: { display: true },
+          tooltip: {
+            callbacks: {
+              label(ctx) {
+                const s = statMap[apps[ctx.dataIndex]];
+                const parts = [
+                  `Done in last ${currentWindow}d: ${s.doneWin}`,
+                  `Done earlier: ${s.doneEarlier}`,
+                  `Remaining: ${s.remaining}`
+                ];
+                return parts[ctx.datasetIndex] || "";
+              }
+            }
+          }
+        }
+      }
+    });
+  }
+
+  // ===== 图表：当前环境完成度环形 =====
+  function createEnvPieChart(val) {
+    const ctx = document.getElementById("envPieChart");
+    if (!ctx) return;
+    if (envPieChart) envPieChart.destroy();
+    envPieChart = new Chart(ctx, {
+      type: "doughnut",
+      data: {
+        labels: ["Done", "Remaining"],
+        datasets: [{
+          data: [val, 100 - val],
+          backgroundColor: ["#111827", "#e5e7eb"],
+          borderWidth: 0
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: "65%",
+        plugins: {
+          legend: { position: "bottom", labels: { font: { size: 11 }, usePointStyle: true } }
+        }
+      }
+    });
+  }
+
+  // ===== 统计：total 为固定值，done 由该 app/env 的 RWI(status="Done") 自动统计 =====
+  function getStat(projectKey, appKey, envKey) {
+    const m    = marketRef(projectKey, currentMarket);
+    const s    = (m && m.apps[appKey] && m.apps[appKey][envKey]) || {};
+    const rows = (m && m.rwi[appKey] && m.rwi[appKey][envKey]) || [];
+    const done = rows.filter(r => r && String(r.status).toUpperCase() === "DONE").length;
+    return { done: done, total: s.total || 0 };
+  }
+
+  // ===== 工具函数 =====
+  function pctOf(s) {
+    if (!s || !s.total) return 0;
+    return Math.max(0, Math.min(100, Math.round((s.done / s.total) * 100)));
+  }
+
+  function getStatus(val) {
+    if (val >= 90) return { text: "Healthy",     cls: "healthy" };
+    if (val >= 50) return { text: "In Progress", cls: "in-progress" };
+    return             { text: "At Risk",     cls: "at-risk" };
+  }
+
+  function labelOf(envKey) {
+    const e = ENV_ORDER.find(x => x.key === envKey);
+    return e ? e.label : "";
+  }
+</script>
+</body>
+</html>
