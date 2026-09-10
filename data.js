@@ -20,6 +20,23 @@
      filter client-side by "updated".
    - Sample below is dummy/placeholder: per-market app keys follow the
      project map (F24=Infra/Helm/CM, C48=Infra/Helm/DAG/DB, DDS=Infra).
+
+   - RELEASE EVENTS (per component) are ADDED AUTOMATICALLY at the bottom of
+     this file by a deterministic dummy generator (seeded by project/market/
+     app/env, so numbers stay stable on every reload). It writes:
+       market.releases[app][env] = {
+         components: ["Auth", "Storage", ...],                 // fixed list
+         events:     [ {component, date, outcome, version} ]    // last ~90 days
+       }
+     outcome is one of "Success" | "Skipped" | "Failed". board.html stacks
+     these per component, filtered by the Last 30/60/90 day window.
+     To use real data instead: delete the generator call below and hand-write
+     market.releases in the same shape.
+
+   - CHANGE REQUEST id ("cr", e.g. "CR-123456") is also ADDED AUTOMATICALLY
+     by a generator at the bottom of this file, for every RWI row that does
+     not already define one. board.html shows it in the Details table's "CR"
+     column. Hand-write "cr" on a row to override.
    ===================================================================== */
 window.DASHBOARD_DATA = {
   "F24": {
@@ -28,7 +45,7 @@ window.DASHBOARD_DATA = {
         "apps": {
           "Infra": { "prod": { "total": 10 }, "pre": { "total": 10 }, "nonprod": { "total": 10 } },
           "Helm":  { "prod": { "total": 8 },  "pre": { "total": 8 },  "nonprod": { "total": 8 } },
-          "CM":    { "prod": { "total": 5 },  "pre": { "total": 5 },  "nonprod": { "total": 5 } }
+          "CM":    { "prod": { "total": 1 },  "pre": { "total": 5 },  "nonprod": { "total": 5 } }
         },
         "rwi": {
           "Infra": {
@@ -449,3 +466,124 @@ window.DASHBOARD_DATA = {
     }
   }
 };
+
+/* =====================================================================
+   DUMMY RELEASE EVENTS  —  generated, not hand-edited.
+   ---------------------------------------------------------------------
+   Produces market.releases[app][env] = { components, events } for every
+   project/market/app/env found above. Deterministic (seeded PRNG), so the
+   same numbers appear on every reload while the dates roll with "today"
+   — that keeps the Last 30 / 60 / 90 day windows meaningful.
+   Delete the IIFE below and hand-write market.releases to use real data.
+   ===================================================================== */
+(function buildDummyReleaseEvents() {
+  var COMPONENTS = {
+    "Infra": ["Auth", "Storage", "Network", "Cache", "Queue", "DB", "Gateway", "Search", "Logging", "Monitor"],
+    "Helm":  ["Chart Repo", "Values Template", "Release Pipeline", "Hooks", "Schema", "Dependencies", "Tests", "Docs"],
+    "CM":    ["Docs Site", "CM Build", "Release Notes", "Templates", "Search Index"],
+    "DAG":   ["Orchestrator", "Scheduler", "Workers", "Support Tools"],
+    "DB":    ["Postgres", "Cache", "ETL Jobs"]
+  };
+  var ENVS = ["prod", "pre", "nonprod"];
+
+  function hashSeed(str) {
+    var h = 2166136261;
+    for (var i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); }
+    return h >>> 0;
+  }
+  function rng(seed) {
+    var a = seed >>> 0;
+    return function () {
+      a |= 0; a = (a + 0x6D2B79F5) | 0;
+      var t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  function isoDaysAgo(days) {
+    var d = new Date();
+    d.setHours(0, 0, 0, 0);
+    d.setDate(d.getDate() - days);
+    var m = String(d.getMonth() + 1); if (m.length < 2) m = "0" + m;
+    var day = String(d.getDate());    if (day.length < 2) day = "0" + day;
+    return d.getFullYear() + "-" + m + "-" + day;
+  }
+  function pickOutcome(r) {
+    return r < 0.72 ? "Success" : (r < 0.88 ? "Skipped" : "Failed");
+  }
+
+  var data = window.DASHBOARD_DATA || {};
+  Object.keys(data).forEach(function (proj) {
+    var projData = data[proj];
+    if (!projData.markets) return;
+    Object.keys(projData.markets).forEach(function (mkt) {
+      var market = projData.markets[mkt];
+      if (!market.apps) return;
+      if (!market.releases) market.releases = {};
+      Object.keys(market.apps).forEach(function (app) {
+        var names = COMPONENTS[app] || [];
+        market.releases[app] = {};
+        ENVS.forEach(function (env) {
+          var slot = market.apps[app] ? market.apps[app][env] : null;
+          var total = (slot && slot.total) || 0;
+          var comps = names.slice(0, total);
+          var rand = rng(hashSeed(proj + "|" + mkt + "|" + app + "|" + env));
+          var events = [];
+
+          comps.forEach(function (comp, idx) {
+            // ~80% of components get >=1 release; up to 3 in the 90 day window.
+            var count = Math.floor(rand() * 3) + (rand() < 0.8 ? 1 : 0);
+            for (var i = 0; i < count; i++) {
+              var bucket = rand();
+              var daysAgo = bucket < 0.40 ? Math.floor(rand() * 28)          // last 30d
+                          : bucket < 0.72 ? 30 + Math.floor(rand() * 28)     // 30-57d
+                          :                 58 + Math.floor(rand() * 31);    // 58-88d
+              events.push({
+                component: comp,
+                date: isoDaysAgo(daysAgo),
+                outcome: pickOutcome(rand()),
+                version: "v" + (1 + Math.floor(rand() * 4)) + "." + Math.floor(rand() * 10) + "." + idx
+              });
+            }
+          });
+
+          market.releases[app][env] = { components: comps, events: events };
+        });
+      });
+    });
+  });
+})();
+
+/* =====================================================================
+   DUMMY CHANGE REQUESTS (CR)  —  generated, not hand-edited.
+   ---------------------------------------------------------------------
+   Gives every RWI row a `cr` (change request id) unless the row already
+   defines one. Deterministic per RWI id, so the same CR shows on every
+   reload. Hand-write "cr" on a row to override, or delete this IIFE to
+   drop the CR column's data.
+   ===================================================================== */
+(function buildDummyChangeRequests() {
+  function hash(str) {
+    var h = 2166136261;
+    for (var i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); }
+    return h >>> 0;
+  }
+  var data = window.DASHBOARD_DATA || {};
+  Object.keys(data).forEach(function (proj) {
+    var markets = data[proj] && data[proj].markets;
+    if (!markets) return;
+    Object.keys(markets).forEach(function (mkt) {
+      var rwi = markets[mkt] && markets[mkt].rwi;
+      if (!rwi) return;
+      Object.keys(rwi).forEach(function (app) {
+        var envs = rwi[app] || {};
+        Object.keys(envs).forEach(function (env) {
+          (envs[env] || []).forEach(function (row) {
+            if (!row || row.cr) return;
+            row.cr = "CR-" + (100000 + (hash(String(row.id)) % 90000));
+          });
+        });
+      });
+    });
+  });
+})();

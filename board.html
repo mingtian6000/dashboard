@@ -16,7 +16,7 @@
     background: #ffffff;
     font-family: 'Segoe UI', Roboto, Arial, sans-serif;
     color: #1f2937;
-    padding: 24px 16px;
+    padding: 18px 16px;
   }
 
   .dashboard {
@@ -63,55 +63,64 @@
     text-transform: uppercase;
     letter-spacing: 0.08em;
     color: #6b7280;
-    margin: 18px 0 8px;
+    margin: 13px 0 7px;
   }
 
   .section-label:first-child {
     margin-top: 0;
   }
 
-  /* ===== 第二层：App Tab ===== */
-  .app-tabs {
+  /* ===== 嵌套 Tab：所有层级共用同一套样式，用缩进体现层级（无文字标签） ===== */
+  .tab-row {
     display: flex;
-    border-bottom: 1px solid #d1d5db;
+    align-items: center;
+    position: relative;
+    margin-bottom: 12px;
   }
 
-  .app-tabs .tab {
-    padding: 10px 24px;
-    font-size: 14px;
-    font-weight: 500;
-    border: 1px solid transparent;
-    border-bottom: none;
-    margin-right: 4px;
-    background: transparent;
-    color: #6b7280;
-    cursor: pointer;
+  .tab-row.level-2 {
+    padding-left: 26px;
   }
 
-  .app-tabs .tab:hover {
-    background: #f3f4f6;
+  /* 层级导引线：表示这一排 Tab 属于上一层选中的项 */
+  .tab-row.level-2::before {
+    content: "";
+    position: absolute;
+    left: 9px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #e5e7eb;
   }
 
-  .app-tabs .tab.active {
-    background: #ffffff;
-    border-color: #d1d5db;
-    border-bottom: 2px solid #111827;
-    color: #111827;
-    font-weight: 600;
-    margin-bottom: -1px;
-  }
-
-  .app-detail {
+  .tabs {
+    display: inline-flex;
     border: 1px solid #d1d5db;
-    border-top: none;
-    padding: 20px;
+    background: #ffffff;
   }
 
-  /* ===== 图表区（柱状图 by App） ===== */
+  .tabs .tab {
+    padding: 7px 14px;
+    font-size: 12.5px;
+    font-weight: 600;
+    border: none;
+    border-right: 1px solid #e5e7eb;
+    background: transparent;
+    color: #4b5563;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .tabs .tab:last-child { border-right: none; }
+  .tabs .tab:hover { background: #eef2ff; }
+  .tabs .tab.active { background: #111827; color: #ffffff; }
+
+  /* ===== 图表区 ===== */
   .chart-box {
     border: 1px solid #d1d5db;
-    padding: 14px 16px;
-    margin-bottom: 20px;
+    padding: 12px 14px;
+    margin-top: 10px;
+    margin-bottom: 22px;
   }
 
   .chart-box h3 {
@@ -131,105 +140,129 @@
     height: 200px;
   }
 
-  /* ===== 第三层：Environment Tab（一行，Production 在前） ===== */
-  .env-tabs {
+  .chart-canvas.tall {
+    height: 260px;
+  }
+
+  /* ===== 顶部：Project 切换 + 全局时间窗口 ===== */
+  .topbar {
     display: flex;
-    flex-wrap: nowrap;
-    border: 1px solid #d1d5db;
-    border-bottom: none;
+    align-items: stretch;
+    justify-content: space-between;
+    flex-wrap: wrap;
     background: #f9fafb;
+    border-bottom: 2px solid #111827;
   }
 
-  .env-tabs .tab {
-    flex: 1 1 auto;
-    padding: 10px 16px;
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: 0.02em;
-    border: none;
-    border-right: 1px solid #e5e7eb;
-    background: transparent;
-    color: #4b5563;
-    cursor: pointer;
-    text-align: center;
-    white-space: nowrap;
-  }
+  .topbar .project-tabs { border-bottom: none; flex: 1 1 auto; }
 
-  .env-tabs .tab:last-child {
-    border-right: none;
-  }
-
-  .env-tabs .tab.active {
-    background: #111827;
-    color: #ffffff;
-  }
-
-  /* ===== 环境详情：进度 + 表格并排 ===== */
-  .env-detail {
-    border: 1px solid #d1d5db;
-    padding: 18px;
-    display: grid;
-    grid-template-columns: minmax(240px, 1fr) 1.6fr;
-    gap: 24px;
-    align-items: start;
-  }
-
-  .env-progress .number {
-    font-size: 36px;
-    font-weight: 700;
-    color: #111827;
-    line-height: 1;
-  }
-
-  .env-progress .label {
-    font-size: 13px;
-    color: #6b7280;
-    margin-top: 6px;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-  }
-
-  .comp-count {
-    font-size: 12.5px;
-    color: #6b7280;
-    margin-top: 4px;
-    text-transform: none;
-    letter-spacing: 0;
-  }
-
-  .count-warn {
-    color: #b45309;
-    font-weight: 600;
-    margin-left: 4px;
-  }
-
-  .progress-bar {
-    width: 100%;
-    height: 8px;
-    background: #e5e7eb;
-    margin-top: 10px;
-  }
-
-  .progress-bar .fill {
-    height: 100%;
-    background: #111827;
-    transition: width 0.4s ease;
-  }
-
-  .env-status {
-    display: inline-block;
-    font-size: 12px;
-    font-weight: 700;
-    padding: 5px 12px;
-    margin-top: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    border: 1px solid #d1d5db;
+  .window-tabs {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 12px;
+    border-left: 1px solid #e5e7eb;
     background: #ffffff;
   }
-  .env-status.healthy    { border-color: #15803d; color: #15803d; }
-  .env-status.in-progress{ border-color: #b45309; color: #b45309; }
-  .env-status.at-risk    { border-color: #b91c1c; color: #b91c1c; }
+
+  .window-tabs .wt-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #6b7280;
+    margin-right: 4px;
+  }
+
+  .window-tabs .tab {
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    border: 1px solid #d1d5db;
+    background: #ffffff;
+    color: #4b5563;
+    cursor: pointer;
+  }
+  .window-tabs .tab:hover  { background: #eef2ff; }
+  .window-tabs .tab.active { background: #111827; border-color: #111827; color: #ffffff; }
+
+  /* ===== 图表区：每个图表占满整行，跟随其所属层级 ===== */
+  .chart-sub {
+    font-size: 11.5px;
+    color: #6b7280;
+    margin: -4px 0 8px;
+  }
+
+  /* 图例 + 计数 */
+  .chips {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    min-height: 26px;
+    font-size: 11.5px;
+    color: #374151;
+    margin-bottom: 8px;
+  }
+  .chips .chip { display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
+  .chips .chip b { font-size: 13px; }
+  .chips .dot { width: 10px; height: 10px; display: inline-block; flex: 0 0 auto; }
+  .chips .dot.success { background: #15803d; }
+  .chips .dot.skipped { background: #b45309; }
+  .chips .dot.failed  { background: #b91c1c; }
+  .chips .dot.recent  { background: #15803d; }
+  .chips .dot.earlier { background: #74c69d; }
+  .chips .dot.remain  { background: #e5e7eb; border: 1px solid #d1d5db; }
+
+  .rel-empty {
+    font-size: 13px;
+    color: #9ca3af;
+    padding: 28px 0;
+    text-align: center;
+  }
+
+  /* ===== 结论区：3 个关键指标 ===== */
+  .kpi-strip {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    border: 1px solid #d1d5db;
+    background: #fafafa;
+    padding: 12px;
+  }
+
+  .kpi {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-top: 3px solid #6b7280;
+    padding: 10px 12px;
+  }
+  .kpi .kpi-l { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #6b7280; }
+  .kpi .kpi-v { font-size: 27px; font-weight: 700; color: #111827; line-height: 1.1; margin-top: 3px; }
+  .kpi .kpi-s { font-size: 11.5px; color: #6b7280; margin-top: 3px; }
+  .kpi.good { border-top-color: #15803d; }
+  .kpi.warn { border-top-color: #b45309; }
+  .kpi.bad  { border-top-color: #b91c1c; }
+  .kpi.good .kpi-v { color: #15803d; }
+  .kpi.warn .kpi-v { color: #b45309; }
+  .kpi.bad  .kpi-v { color: #b91c1c; }
+  .kpi .kpi-warn { color: #b45309; font-weight: 600; }
+
+  .kpi-read {
+    font-size: 12px;
+    line-height: 1.5;
+    color: #6b7280;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-top: none;
+    padding: 9px 16px;
+    margin-bottom: 16px;
+  }
+  .kpi-read b { color: #374151; }
+
+  /* ===== 明细区（常驻显示，不折叠） ===== */
+  .details-box { border: 1px solid #d1d5db; }
+  .details-body { padding: 16px; }
 
   /* ===== RWI 时间窗口（Last 30 / 60 / 90 days，按 updated 字段过滤） ===== */
   .activity-head {
@@ -248,27 +281,6 @@
     letter-spacing: 0.05em;
     color: #6b7280;
   }
-
-  .period-tabs {
-    display: inline-flex;
-    border: 1px solid #d1d5db;
-    background: #f9fafb;
-  }
-
-  .period-tabs .tab {
-    padding: 5px 12px;
-    font-size: 12px;
-    font-weight: 600;
-    border: none;
-    border-right: 1px solid #e5e7eb;
-    background: transparent;
-    color: #4b5563;
-    cursor: pointer;
-  }
-
-  .period-tabs .tab:last-child { border-right: none; }
-  .period-tabs .tab:hover      { background: #eef2ff; }
-  .period-tabs .tab.active     { background: #111827; color: #ffffff; }
 
   .period-summary {
     display: flex;
@@ -375,22 +387,6 @@
   .rwi-filters select:focus {
     outline: 1px solid #111827;
   }
-  .rwi-filters .date-range {
-    display: flex;
-    gap: 3px;
-    white-space: nowrap;
-  }
-  .rwi-filters .date-range input[type="date"] {
-    flex: 1 1 0;
-    min-width: 0;
-    font-size: 11px;
-    padding: 2px 3px;
-    border: 1px solid #d1d5db;
-    background: #fff;
-    color: #1f2937;
-    width: auto;
-    box-sizing: border-box;
-  }
 
   .rwi-pager {
     display: flex;
@@ -411,75 +407,18 @@
   .rwi-pager .pg:disabled { opacity: 0.4; cursor: default; }
   .rwi-pager .pg-info { font-size: 12px; color: #374151; }
 
-  /* ===== Market Tab（第二层）+ Market 汇总 ===== */
-  .market-tabs {
-    display: flex;
-    border: 1px solid #d1d5db;
-    background: #f9fafb;
-    margin-bottom: 10px;
-  }
-  .market-tabs .tab {
-    padding: 9px 20px;
-    font-size: 13px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
-    border: none;
-    border-right: 1px solid #e5e7eb;
-    background: transparent;
-    color: #4b5563;
-    cursor: pointer;
-  }
-  .market-tabs .tab:last-child { border-right: none; }
-  .market-tabs .tab:hover { background: #eef2ff; }
-  .market-tabs .tab.active { background: #111827; color: #ffffff; }
-
-  .market-summary {
-    border: 1px solid #d1d5db;
-    padding: 14px 16px;
-    margin-bottom: 18px;
-    background: #fafafa;
-  }
-  .market-summary .ms-title {
-    font-size: 12px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: #6b7280;
-    margin-bottom: 10px;
-  }
-  .market-summary .ms-cells {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 16px;
-  }
-  .market-summary .ms-cell {
-    border: 1px solid #e5e7eb;
-    background: #ffffff;
-    padding: 10px 12px;
-  }
-  .market-summary .ms-env {
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: #6b7280;
-  }
-  .market-summary .ms-pct { font-size: 26px; font-weight: 700; color: #111827; line-height: 1.1; margin-top: 2px; }
-  .market-summary .ms-count { font-size: 11.5px; color: #6b7280; margin-top: 2px; }
-  .market-summary .progress-bar { margin-top: 8px; height: 6px; }
-  .market-summary .env-status { margin-top: 8px; font-size: 10.5px; padding: 3px 9px; }
-
   @media (max-width: 768px) {
-    .env-detail { grid-template-columns: 1fr; }
-    .market-summary .ms-cells { grid-template-columns: 1fr; }
+    .kpi-strip { grid-template-columns: 1fr; }
   }
 </style>
 </head>
 <body>
 
 <div class="dashboard">
-  <div class="project-tabs" id="projectTabs"></div>
+  <div class="topbar">
+    <div class="project-tabs" id="projectTabs"></div>
+    <div class="window-tabs" id="windowTabs"></div>
+  </div>
   <div class="main-content" id="mainContent"></div>
 </div>
 
@@ -537,15 +476,32 @@
     { days: 60, label: "Last 60 days" },
     { days: 90, label: "Last 90 days" }
   ];
-  let currentWindow = 90;
+  let currentWindow = 30;
+
+  // ===== 统一配色：两张图（以及图例圆点）共用同一套风格 =====
+  // 想整体换成黑白灰风格时，只改这里的色值即可（保持两图一致）。
+  const PALETTE = {
+    complete:    "#15803d",   // 完成（本窗口）
+    completeOld: "#74c69d",   // 完成（更早）
+    remaining:   "#e5e7eb",   // 尚未完成
+    success:     "#15803d",   // 发布成功
+    skipped:     "#b45309",   // 发布跳过
+    failed:      "#b91c1c"    // 发布失败
+  };
+  // 未选中的应用的减淡色（仅用于应用对比图的强调效果）
+  const DIM = {
+    complete:    "rgba(21, 128, 61, 0.28)",
+    completeOld: "rgba(116, 198, 157, 0.32)"
+  };
 
   let appBarChart  = null;
-  let envPieChart  = null;
+  let componentReleaseChart = null;
 
   document.addEventListener("DOMContentLoaded", init);
 
   function init() {
     renderProjectTabs();
+    renderWindowTabs();
     renderContent();
   }
 
@@ -569,39 +525,78 @@
     });
   }
 
+  // ===== 全局时间窗口（Last 30 / 60 / 90 days，驱动所有按时间过滤的图/表） =====
+  function renderWindowTabs() {
+    const c = document.getElementById("windowTabs");
+    if (!c) return;
+    c.innerHTML = `<span class="wt-label">Period</span>` + TIME_WINDOWS.map(w =>
+      `<button type="button" class="tab${w.days === currentWindow ? " active" : ""}" onclick="setWindow(${w.days})">${w.label}</button>`
+    ).join("");
+  }
+
   // ===== 主内容 =====
   function renderContent() {
     const main = document.getElementById("mainContent");
-    const project = DATA[currentProject];
 
     main.innerHTML = `
-      <div class="section-label">Market</div>
-      <div class="market-tabs" id="marketTabs"></div>
-      <div class="market-summary" id="marketSummary"></div>
+      <div class="tab-row level-1">
+        <div class="tabs" id="marketTabs"></div>
+      </div>
+      <div class="tab-row level-2">
+        <div class="tabs" id="envTabs"></div>
+      </div>
 
-      <div class="section-label">Application</div>
-      <div class="app-tabs" id="appTabs"></div>
+      <div class="chart-box">
+        <h3>Completion by application</h3>
+        <div class="chart-sub" id="appChartSub"></div>
+        <div class="chips" id="appChartStats"></div>
+        <div class="chart-canvas tall"><canvas id="appBarChart"></canvas></div>
+      </div>
 
-      <div class="app-detail">
-        <!-- by App 堆叠柱状图：随 market + env + 30/60/90 时间窗口变化 -->
-        <div class="chart-box">
-          <h3 id="appChartTitle">Completion by Application</h3>
-          <div class="chart-canvas"><canvas id="appBarChart"></canvas></div>
+      <div class="tab-row level-1">
+        <div class="tabs" id="appTabs"></div>
+      </div>
+
+      <div class="section-label" id="headlineLabel"></div>
+      <div class="kpi-strip" id="kpiStrip"></div>
+      <div class="kpi-read" id="kpiRead"></div>
+
+      <div class="chart-box">
+        <h3>Release outcomes by component</h3>
+        <div class="chart-sub" id="componentReleaseSub"></div>
+        <div class="chips" id="componentReleaseStats"></div>
+        <div class="chart-canvas tall" id="componentReleaseCanvasWrap">
+          <canvas id="componentReleaseChart"></canvas>
         </div>
+        <div class="rel-empty" id="componentReleaseEmpty" style="display:none;">
+          No components tracked for this application / environment.
+        </div>
+      </div>
 
-        <div class="section-label">Environment</div>
-        <div class="env-tabs" id="envTabs"></div>
-
-        <div class="env-detail" id="envDetail"></div>
+      <div class="section-label">Details — release work items</div>
+      <div class="details-box">
+        <div class="details-body" id="envDetail"></div>
       </div>
     `;
 
     renderMarketTabs();
-    renderMarketSummary();
-    renderAppTabs();
     renderEnvTabs();
+    renderAppTabs();
+    renderKpiStrip();
     renderEnvDetail();
     createAppBarChart();
+    createComponentReleaseChart();
+  }
+
+  // 所有随时间窗口 / 选择变化的区域统一刷新
+  function refreshAll() {
+    renderMarketTabs();
+    renderEnvTabs();
+    renderAppTabs();
+    renderKpiStrip();
+    renderEnvDetail();
+    createAppBarChart();
+    createComponentReleaseChart();
   }
 
   // ===== 第二层：Market Tab =====
@@ -617,52 +612,62 @@
         currentMarket = mkt;
         currentApp    = appKeysOf(currentProject)[0];
         currentEnv    = "prod";
-        renderMarketTabs();
-        renderMarketSummary();
-        renderAppTabs();
-        renderEnvTabs();
-        renderEnvDetail();
-        createAppBarChart();
+        refreshAll();
       };
       c.appendChild(b);
     });
   }
 
-  // ===== Market 汇总：按 env 聚合该 market 下所有 app 的完成度 =====
-  function envAggregate(envKey) {
-    let total = 0, done = 0;
-    appKeysOf(currentProject).forEach(app => {
-      const m = marketRef(currentProject, currentMarket);
-      if (!m) return;
-      const s = (m.apps[app] && m.apps[app][envKey]) || {};
-      total += s.total || 0;
-      const rows = (m.rwi[app] && m.rwi[app][envKey]) || [];
-      done += rows.filter(r => r && String(r.status).toUpperCase() === "DONE").length;
+  // ===== 环境选择（与 Market / Application 同一种分段控件） =====
+  function renderEnvTabs() {
+    const c = document.getElementById("envTabs");
+    if (!c) return;
+    c.innerHTML = "";
+    ENV_ORDER.forEach(env => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "tab" + (env.key === currentEnv ? " active" : "");
+      b.textContent = env.label;
+      b.onclick = () => { currentEnv = env.key; refreshAll(); };
+      c.appendChild(b);
     });
-    return { done, total };
   }
 
-  function renderMarketSummary() {
-    const host = document.getElementById("marketSummary");
-    if (!host) return;
-    host.innerHTML = `
-      <div class="ms-title">Market · ${esc(currentMarket)}</div>
-      <div class="ms-cells">
-        ${ENV_ORDER.map(env => {
-          const agg = envAggregate(env.key);
-          const pct = pctOf(agg);
-          const st  = getStatus(pct);
-          return `
-          <div class="ms-cell">
-            <div class="ms-env">${env.label}</div>
-            <div class="ms-pct">${pct}%</div>
-            <div class="ms-count">${agg.done} of ${agg.total} components</div>
-            <div class="progress-bar"><div class="fill" style="width:${pct}%;"></div></div>
-            <span class="env-status ${st.cls}">${st.text}</span>
-          </div>`;
-        }).join("")}
+  // ===== 结论区：3 个关键指标（全部为当前 App × 当前 Environment） =====
+  function renderKpiStrip() {
+    const strip = document.getElementById("kpiStrip");
+    const read  = document.getElementById("kpiRead");
+    if (!strip) return;
+
+    const label = document.getElementById("headlineLabel");
+    if (label) label.textContent =
+      `Headline — ${currentApp} · ${labelOf(currentEnv)} · last ${currentWindow} days`;
+
+    const stat   = getStat(currentProject, currentApp, currentEnv);
+    const comp   = pctOf(stat);
+    const sum    = releaseSummary(currentWindow);
+    const relPct = sum.compCount ? Math.round((sum.released / sum.compCount) * 100) : 0;
+    const rateTone = sum.all === 0 ? "neutral" : sum.rate >= 90 ? "good" : sum.rate >= 70 ? "warn" : "bad";
+
+    strip.innerHTML = `
+      <div class="kpi neutral">
+        <div class="kpi-l">Component completion</div>
+        <div class="kpi-v">${comp}%</div>
+        <div class="kpi-s">${stat.done} of ${stat.total} components complete${stat.done > stat.total ? ` <span class="kpi-warn">⚠ done exceeds total</span>` : ""}</div>
+      </div>
+      <div class="kpi ${rateTone}">
+        <div class="kpi-l">Release success rate</div>
+        <div class="kpi-v">${sum.all ? sum.rate + "%" : "—"}</div>
+        <div class="kpi-s">${sum.totals.Success} of ${sum.all} release attempts succeeded · last ${currentWindow}d</div>
+      </div>
+      <div class="kpi neutral">
+        <div class="kpi-l">Components released</div>
+        <div class="kpi-v">${sum.released}<span style="font-size:16px;color:#9ca3af;">/${sum.compCount}</span></div>
+        <div class="kpi-s">${relPct}% shipped at least once · last ${currentWindow}d</div>
       </div>
     `;
+
+    if (read) read.innerHTML = `<b>How to read:</b> <b>Component completion</b> = components delivered to this environment (all time). <b>Release success rate</b> = successful releases ÷ all release attempts in the last ${currentWindow} days. <b>Components released</b> = components with at least one successful release in that period.`;
   }
 
   // ===== 第三层：App Tab =====
@@ -675,54 +680,19 @@
       b.textContent = app;
       b.onclick = () => {
         currentApp = app;
-        renderAppTabs();
-        renderEnvDetail();
-        createAppBarChart();
+        refreshAll();
       };
       c.appendChild(b);
     });
   }
 
-  // ===== 第三层：Environment Tab（一行） =====
-  function renderEnvTabs() {
-    const c = document.getElementById("envTabs");
-    c.innerHTML = "";
-    ENV_ORDER.forEach(env => {
-      const b = document.createElement("button");
-      b.className = "tab" + (env.key === currentEnv ? " active" : "");
-      b.textContent = env.label;
-      b.onclick = () => {
-        currentEnv = env.key;
-        renderEnvTabs();
-        renderEnvDetail();
-        createAppBarChart();
-      };
-      c.appendChild(b);
-    });
-  }
+  // ===== 表格筛选 / 分页由 activityColumnHTML + bindActivityTable 处理 =====
 
-  // ===== 环境详情：进度（全量）+ RWI 活动（按 30/60/90 天窗口） =====
+  // ===== 环境详情 / 明细：RWI 活动（按全局时间窗口过滤） =====
   function renderEnvDetail() {
     const c = document.getElementById("envDetail");
-    const stat     = getStat(currentProject, currentApp, currentEnv);
-    const value    = pctOf(stat);
-    const status   = getStatus(value);
-    const envLabel = labelOf(currentEnv);
-
-    c.innerHTML = `
-      <div class="env-progress">
-        <div class="number">${value}%</div>
-        <div class="label">${currentApp} · ${envLabel}</div>
-        <div class="comp-count">${stat.done} of ${stat.total} components complete (all time)${stat.done > stat.total ? ` <span class="count-warn">⚠ done (${stat.done}) exceeds total (${stat.total}) — check data.js totals</span>` : ""}</div>
-        <div class="progress-bar"><div class="fill" style="width:${value}%;"></div></div>
-        <div class="env-status ${status.cls}">${status.text}</div>
-      </div>
-      ${activityColumnHTML(currentWindow)}
-    `;
-
-    // 环境完成度环形图
-    createEnvPieChart(value);
-
+    if (!c) return;
+    c.innerHTML = activityColumnHTML(currentWindow);
     // 表格筛选 / 分页绑定（仅首次渲染该 app+env 时重置分页）
     bindActivityTable();
   }
@@ -759,7 +729,7 @@
   }
 
   // 表格分页
-  const PAGE_SIZE = 8;
+  const PAGE_SIZE = 10;
   let tablePage = 1;
   let tableKey = "";
 
@@ -782,15 +752,11 @@
           ? { cls: "down",  txt: `▼ deteriorating vs prior ${days}d (${pct}% vs ${prevPct}%)` }
           : { cls: "flat",  txt: `→ stable vs prior ${days}d (${pct}% vs ${prevPct}%)` };
 
-    const tabs = TIME_WINDOWS.map(w =>
-      `<button class="tab${w.days === currentWindow ? " active" : ""}" onclick="setWindow(${w.days})">${w.label}</button>`
-    ).join("");
-
     return `
       <div>
         <div class="activity-head">
-          <span class="activity-title">RWI Activity · by last updated</span>
-          <div class="period-tabs">${tabs}</div>
+          <span class="activity-title">Release work items · updated in the last ${days} days</span>
+          <span class="trend ${trend.cls}">${trend.txt}</span>
         </div>
         <div class="period-summary">
           <span><span class="ps-num">${cur.DONE}</span><span class="ps-key">done</span></span>
@@ -801,7 +767,6 @@
           <span class="ps-sep">|</span>
           <span><span class="ps-num">${pct}%</span><span class="ps-key">done in window</span></span>
           <span class="ps-grow"></span>
-          <span class="trend ${trend.cls}">${trend.txt}</span>
         </div>
         ${rwiTableSkeleton()}
       </div>
@@ -811,8 +776,8 @@
   function setWindow(days) {
     currentWindow = days;
     tablePage = 1;
-    renderEnvDetail();
-    createAppBarChart();
+    renderWindowTabs();
+    refreshAll();
   }
 
   function envRowsAll() {
@@ -838,8 +803,6 @@
   function rwiTableSkeleton() {
     const compOptions = uniqSorted(envRowsAll().map(r => r.component))
       .map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join("");
-    const assigneeOptions = uniqSorted(envRowsAll().map(r => r.assignee))
-      .map(a => `<option value="${esc(a)}">${esc(a)}</option>`).join("");
 
     return `
       <div class="rwi-tools">
@@ -854,8 +817,7 @@
             <th>RWI ID</th>
             <th>Component</th>
             <th>Title</th>
-            <th>Assignee</th>
-            <th>Target Date</th>
+            <th>CR</th>
             <th>Updated</th>
             <th>Status</th>
           </tr>
@@ -863,9 +825,8 @@
             <th><input type="text" id="fId" placeholder="Contains…" title="Filter RWI ID"></th>
             <th><select id="fComponent" title="Filter component"><option value="">All</option>${compOptions}</select></th>
             <th><input type="text" id="fTitle" placeholder="Contains…" title="Filter title"></th>
-            <th><select id="fAssignee" title="Filter assignee"><option value="">All</option>${assigneeOptions}</select></th>
-            <th><span class="date-range"><input type="date" id="fTargetFrom" title="Target from"><input type="date" id="fTargetTo" title="Target to"></span></th>
-            <th><span class="date-range"><input type="date" id="fUpdatedFrom" title="Updated from"><input type="date" id="fUpdatedTo" title="Updated to"></span></th>
+            <th><input type="text" id="fCr" placeholder="Contains…" title="Filter CR"></th>
+            <th></th>
             <th><select id="fStatus" title="Filter status"><option value="">All</option><option>Done</option><option>WIP</option><option>Open</option></select></th>
           </tr>
         </thead>
@@ -882,8 +843,7 @@
         <td>${esc(r.id)}</td>
         <td>${esc(r.component)}</td>
         <td>${esc(r.title)}</td>
-        <td>${esc(r.assignee)}</td>
-        <td>${esc(r.target)}</td>
+        <td>${r.cr ? esc(r.cr) : "—"}</td>
         <td>${r.updated ? esc(r.updated) : "—"}</td>
         <td><span class="st st-${esc(String(r.status || "").toLowerCase())}">${esc(r.status)}</span></td>
       </tr>`;
@@ -900,22 +860,16 @@
       id: gv("fId").toLowerCase(),
       component: gv("fComponent"),
       title: gv("fTitle").toLowerCase(),
-      assignee: gv("fAssignee"),
-      status: gv("fStatus"),
-      tFrom: gv("fTargetFrom"), tTo: gv("fTargetTo"),
-      uFrom: gv("fUpdatedFrom"), uTo: gv("fUpdatedTo")
+      cr: gv("fCr").toLowerCase(),
+      status: gv("fStatus")
     };
 
     const rows = activityRowsInWindow().filter(r => {
       if (f.id && !String(r.id || "").toLowerCase().includes(f.id)) return false;
       if (f.component && String(r.component || "").trim().toLowerCase() !== f.component.toLowerCase()) return false;
       if (f.title && !String(r.title || "").toLowerCase().includes(f.title)) return false;
-      if (f.assignee && String(r.assignee || "").trim().toLowerCase() !== f.assignee.toLowerCase()) return false;
+      if (f.cr && !String(r.cr || "").toLowerCase().includes(f.cr)) return false;
       if (f.status && String(r.status || "").trim().toLowerCase() !== f.status.toLowerCase()) return false;
-      if (f.tFrom && (r.target || "") < f.tFrom) return false;
-      if (f.tTo   && (r.target || "") > f.tTo) return false;
-      if (f.uFrom && (r.updated || "") < f.uFrom) return false;
-      if (f.uTo   && (r.updated || "") > f.uTo) return false;
       return true;
     });
 
@@ -928,7 +882,7 @@
 
     body.innerHTML = slice.length
       ? slice.map(rwiRowHTML).join("")
-      : `<tr><td colspan="7" class="placeholder">${total === 0
+      : `<tr><td colspan="6" class="placeholder">${total === 0
             ? "No RWI match your filters in the current window."
             : "No RWI updated in the last " + currentWindow + " days for " + labelOf(currentEnv) + " yet."}</td></tr>`;
 
@@ -978,10 +932,10 @@
     if (!ctx) return;
     if (appBarChart) appBarChart.destroy();
 
-    // 标题随当前 market / env 与时间窗口更新
-    const title = document.getElementById("appChartTitle");
-    if (title) title.textContent =
-      `Completion by Application (${currentMarket} · ${labelOf(currentEnv)}) · done in last ${currentWindow} days`;
+    // 副标题写清楚统计范围：本图覆盖整个 market（所有应用），选中的应用高亮
+    const sub = document.getElementById("appChartSub");
+    if (sub) sub.textContent =
+      `All applications · ${currentMarket} · ${labelOf(currentEnv)} · ${currentApp} highlighted`;
 
     const apps = appKeysOf(currentProject);
     const statMap = {};
@@ -992,11 +946,30 @@
       const doneWin = rows.filter(r => statusKey(r) === "DONE" && isInWindow(r, currentWindow)).length;
       statMap[app] = {
         total:       allTime.total,
+        done:        allTime.done,
         doneWin:     doneWin,
         doneEarlier: Math.max(0, allTime.done - doneWin),
         remaining:   Math.max(0, allTime.total - allTime.done)
       };
     });
+
+    // 图例：与右图保持完全相同的结构，保证两图 X 轴在同一条水平线上
+    // （此处不放合计数字——按应用拆分的柱状图，市场级合计容易误读）
+    const chips = document.getElementById("appChartStats");
+    if (chips) {
+      chips.innerHTML = `
+        <span class="chip"><span class="dot recent"></span>Completed in last ${currentWindow}d</span>
+        <span class="chip"><span class="dot earlier"></span>Completed earlier</span>
+        <span class="chip"><span class="dot remain"></span>Not complete yet</span>
+      `;
+    }
+
+    // 选中的应用用实色，其余应用减淡 → Application 的选择对这张图也有可见效果。
+    // 注意：「尚未完成」对所有应用保持同一浅灰，否则柱子总高会被误读。
+    const onSel = a => a === currentApp;
+    const colRecent  = apps.map(a => onSel(a) ? PALETTE.complete    : DIM.complete);
+    const colEarlier = apps.map(a => onSel(a) ? PALETTE.completeOld : DIM.completeOld);
+    const colRemain  = apps.map(() => PALETTE.remaining);
 
     appBarChart = new Chart(ctx, {
       type: "bar",
@@ -1004,25 +977,25 @@
         labels: apps.map(app => `${app} (${statMap[app].total})`),
         datasets: [
           {
-            label: `Done in last ${currentWindow}d`,
+            label: `Completed in last ${currentWindow}d`,
             data: apps.map(app => statMap[app].doneWin),
-            backgroundColor: "#111827",
+            backgroundColor: colRecent,
             stack: "workload",
-            maxBarThickness: 56
+            maxBarThickness: 90
           },
           {
-            label: "Done earlier",
+            label: "Completed earlier",
             data: apps.map(app => statMap[app].doneEarlier),
-            backgroundColor: "#9ca3af",
+            backgroundColor: colEarlier,
             stack: "workload",
-            maxBarThickness: 56
+            maxBarThickness: 90
           },
           {
-            label: "Remaining",
+            label: "Not complete yet",
             data: apps.map(app => statMap[app].remaining),
-            backgroundColor: "#e5e7eb",
+            backgroundColor: colRemain,
             stack: "workload",
-            maxBarThickness: 56
+            maxBarThickness: 90
           }
         ]
       },
@@ -1035,21 +1008,18 @@
             stacked: true,
             beginAtZero: true,
             ticks: { precision: 0 },
-            title: { display: true, text: "component count" }
+            title: { display: true, text: "components" }
           }
         },
         plugins: {
-          legend: { display: true },
+          legend: { display: false },
           tooltip: {
             callbacks: {
-              label(ctx) {
-                const s = statMap[apps[ctx.dataIndex]];
-                const parts = [
-                  `Done in last ${currentWindow}d: ${s.doneWin}`,
-                  `Done earlier: ${s.doneEarlier}`,
-                  `Remaining: ${s.remaining}`
-                ];
-                return parts[ctx.datasetIndex] || "";
+              afterBody(items) {
+                if (!items.length) return "";
+                const s   = statMap[apps[items[0].dataIndex]];
+                const pct = s.total ? Math.round((s.done / s.total) * 100) : 0;
+                return [`Completion: ${pct}%  (${s.done} of ${s.total})`];
               }
             }
           }
@@ -1058,27 +1028,129 @@
     });
   }
 
-  // ===== 图表：当前环境完成度环形 =====
-  function createEnvPieChart(val) {
-    const ctx = document.getElementById("envPieChart");
+  // ===== 图表：按组件堆叠发布结果（Success / Skipped / Failed，随 30/60/90 窗口） =====
+  function normOutcome(v) {
+    const k = String(v || "").trim().toLowerCase();
+    if (k === "success") return "Success";
+    if (k === "skipped") return "Skipped";
+    if (k === "failed")  return "Failed";
+    return null;
+  }
+
+  // 当前 app + env 的发布数据（data.js 里 releases[app][env] = { components, events }）
+  function releaseData() {
+    const m   = marketRef(currentProject, currentMarket);
+    const rel = m && m.releases && m.releases[currentApp] && m.releases[currentApp][currentEnv];
+    return rel || { components: [], events: [] };
+  }
+
+  // 按时间窗口聚合每个组件的发布结果：{ component: {Success, Skipped, Failed} }
+  function releaseCounts(days) {
+    const rel = releaseData();
+    const byComp = {};
+    rel.components.forEach(c => { byComp[c] = { Success: 0, Skipped: 0, Failed: 0 }; });
+    rel.events.forEach(e => {
+      if (!isInWindow({ updated: e.date }, days)) return;
+      const row = byComp[e.component];
+      const key = row ? normOutcome(e.outcome) : null;
+      if (key) row[key]++;
+    });
+    return byComp;
+  }
+
+  function releaseSummary(days) {
+    const rel    = releaseData();
+    const byComp = releaseCounts(days);
+    const totals = { Success: 0, Skipped: 0, Failed: 0 };
+    let released = 0;
+    rel.components.forEach(c => {
+      const row = byComp[c];
+      totals.Success += row.Success;
+      totals.Skipped += row.Skipped;
+      totals.Failed  += row.Failed;
+      if (row.Success > 0) released++;
+    });
+    const all = totals.Success + totals.Skipped + totals.Failed;
+    return {
+      totals: totals,
+      all: all,
+      rate: all ? Math.round((totals.Success / all) * 100) : 0,
+      released: released,
+      compCount: rel.components.length
+    };
+  }
+
+  function createComponentReleaseChart() {
+    const wrap    = document.getElementById("componentReleaseCanvasWrap");
+    const ctx     = document.getElementById("componentReleaseChart");
+    const emptyEl = document.getElementById("componentReleaseEmpty");
     if (!ctx) return;
-    if (envPieChart) envPieChart.destroy();
-    envPieChart = new Chart(ctx, {
-      type: "doughnut",
+    if (componentReleaseChart) { componentReleaseChart.destroy(); componentReleaseChart = null; }
+
+    const comps = releaseData().components;
+
+    const sub = document.getElementById("componentReleaseSub");
+    if (sub) sub.textContent = `${currentApp} only · ${currentMarket} · ${labelOf(currentEnv)}`;
+    const statsEl = document.getElementById("componentReleaseStats");
+    const sum     = releaseSummary(currentWindow);
+
+    if (!comps.length) {
+      if (wrap)    wrap.style.display = "none";
+      if (emptyEl) emptyEl.style.display = "";
+      if (statsEl) statsEl.innerHTML = "";
+      return;
+    }
+    if (wrap)    wrap.style.display = "";
+    if (emptyEl) emptyEl.style.display = "none";
+
+    // 图例即计数：一眼看到 成功 / 跳过 / 失败 的条数
+    if (statsEl) statsEl.innerHTML = `
+      <span class="chip"><span class="dot success"></span>Success <b>${sum.totals.Success}</b></span>
+      <span class="chip"><span class="dot skipped"></span>Skipped <b>${sum.totals.Skipped}</b></span>
+      <span class="chip"><span class="dot failed"></span>Failed <b>${sum.totals.Failed}</b></span>
+    `;
+
+    const byComp  = releaseCounts(currentWindow);
+    componentReleaseChart = new Chart(ctx, {
+      type: "bar",
       data: {
-        labels: ["Done", "Remaining"],
-        datasets: [{
-          data: [val, 100 - val],
-          backgroundColor: ["#111827", "#e5e7eb"],
-          borderWidth: 0
-        }]
+        labels: comps,
+        datasets: [
+          { label: "Success", data: comps.map(c => byComp[c].Success), backgroundColor: PALETTE.success, stack: "rel", maxBarThickness: 56 },
+          { label: "Skipped", data: comps.map(c => byComp[c].Skipped), backgroundColor: PALETTE.skipped, stack: "rel", maxBarThickness: 56 },
+          { label: "Failed",  data: comps.map(c => byComp[c].Failed),  backgroundColor: PALETTE.failed,  stack: "rel", maxBarThickness: 56 }
+        ]
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        cutout: "65%",
+        scales: {
+          x: {
+            stacked: true,
+            ticks: { autoSkip: false, maxRotation: 45, minRotation: 0, font: { size: 11 } }
+          },
+          y: {
+            stacked: true,
+            beginAtZero: true,
+            ticks: { precision: 0 },
+            title: { display: true, text: "releases" }
+          }
+        },
         plugins: {
-          legend: { position: "bottom", labels: { font: { size: 11 }, usePointStyle: true } }
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              afterBody(items) {
+                if (!items.length) return "";
+                const s   = byComp[comps[items[0].dataIndex]];
+                const all = s.Success + s.Skipped + s.Failed;
+                return [
+                  `Success rate: ${all ? Math.round((s.Success / all) * 100) : 0}%`,
+                  `Total releases in ${currentWindow}d: ${all}`
+                ];
+              }
+            }
+          }
         }
       }
     });
@@ -1097,12 +1169,6 @@
   function pctOf(s) {
     if (!s || !s.total) return 0;
     return Math.max(0, Math.min(100, Math.round((s.done / s.total) * 100)));
-  }
-
-  function getStatus(val) {
-    if (val >= 90) return { text: "Healthy",     cls: "healthy" };
-    if (val >= 50) return { text: "In Progress", cls: "in-progress" };
-    return             { text: "At Risk",     cls: "at-risk" };
   }
 
   function labelOf(envKey) {
